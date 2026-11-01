@@ -60,22 +60,21 @@ ibot:
   head_hidden_dim: 2048
 train:
   batch_size_per_gpu: 64
-  dataset_path: ImageNet:split=TRAIN
-  output_dir: .
+  dataset_path: "ImageNet:split=TRAIN:root=./datasets/imagenet:extra=./datasets/imagenet"
   saveckp_freq: 20
   seed: 0
-  num_workers: 10
+  num_workers: 0
   OFFICIAL_EPOCH_LENGTH: 1250
   cache_dataset: true
   centering: "centering" # or "sinkhorn_knopp"
   cell_augmentation: false
 student:
-  arch: vit_large
-  patch_size: 16
-  drop_path_rate: 0.3
+  arch: vit_small
+  patch_size: 14
+  drop_path_rate: 0.0  #0.3
   layerscale: 1.0e-05
   drop_path_uniform: true
-  pretrained_weights: ''
+  pretrained_weights: 'D:/Deeplearning_code/yolov8/dinov2/weights/dinov2_vits14_converted.pth'
   ffn_layer: "mlp"
   block_chunks: 0
   qkv_bias: true
@@ -95,12 +94,12 @@ teacher:
   in_chans: 3
   channel_adaptive: false
 optim:
-  epochs: 100
+  epochs: 100   #100
   weight_decay: 0.04
   weight_decay_end: 0.4
   base_lr: 0.004  # learning rate for a batch size of 1024
   lr: 0.  # will be set after applying scaling rule
-  warmup_epochs: 10
+  warmup_epochs: 10  #10
   min_lr: 1.0e-06
   clip_grad: 3.0
   freeze_last_layer_epochs: 1
@@ -117,7 +116,7 @@ crops:
   local_crops_scale:
   - 0.05
   - 0.32
-  global_crops_size: 224
-  local_crops_size: 96
+  global_crops_size: 518 #224
+  local_crops_size: 98 #96
 evaluation:
   eval_period_iterations: 12500

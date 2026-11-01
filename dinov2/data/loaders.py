@@ -2,7 +2,7 @@
 #
 # This source code is licensed under the Apache License, Version 2.0
 # found in the LICENSE file in the root directory of this source tree.
-
+from torchvision.datasets import ImageFolder
 import logging
 from enum import Enum
 from typing import Any, Callable, List, Optional, TypeVar
@@ -68,6 +68,8 @@ def _parse_dataset_str(dataset_str: str):
         class_ = CHAMMI_WTC
     elif name == "CHAMMI_HPA":
         class_ = CHAMMI_HPA
+    elif name == "ImageFolder":
+        class_ = ImageFolder
     else:
         raise ValueError(f'Unsupported dataset "{name}"')
 

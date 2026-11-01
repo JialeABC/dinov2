@@ -5,8 +5,10 @@
 
 import os
 from typing import Any
+from torch.distributed.fsdp import FullStateDictConfig
 
 import torch
+from dinov2 import data
 import dinov2.distributed as distributed
 from functools import partial
 from fvcore.common.checkpoint import Checkpointer
@@ -95,7 +97,10 @@ class FSDPCheckpointer(Checkpointer):
             return
 
         data = {}
-        with FSDP.state_dict_type(self.model, StateDictType.LOCAL_STATE_DICT):
+        # with FSDP.state_dict_type(self.model, StateDictType.LOCAL_STATE_DICT):
+        #     data["model"] = self.model.state_dict()
+        
+        with FSDP.state_dict_type(self.model,StateDictType.FULL_STATE_DICT,FullStateDictConfig(offload_to_cpu=False,rank0_only=False)):
             data["model"] = self.model.state_dict()
 
         # data["model"] = self.model.state_dict()
@@ -111,9 +116,12 @@ class FSDPCheckpointer(Checkpointer):
             torch.save(data, f)
         self.tag_last_checkpoint(basename)
 
+    # def load(self, *args, **kwargs):
+    #     with FSDP.state_dict_type(self.model, StateDictType.LOCAL_STATE_DICT):
+    #         return super().load(*args, **kwargs)
     def load(self, *args, **kwargs):
-        with FSDP.state_dict_type(self.model, StateDictType.LOCAL_STATE_DICT):
-            return super().load(*args, **kwargs)
+            with FSDP.state_dict_type(self.model, StateDictType.FULL_STATE_DICT):
+                return super().load(*args, **kwargs)
 
     def has_checkpoint(self) -> bool:
         """

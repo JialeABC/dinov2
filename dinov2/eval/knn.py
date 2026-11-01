@@ -42,12 +42,14 @@ def get_args_parser(
     parser.add_argument(
         "--train-dataset",
         dest="train_dataset_str",
+        default="ImageNet:split=TRAIN:root=./datasets/imagenet:extra=./datasets/imagenet",
         type=str,
         help="Training dataset",
     )
     parser.add_argument(
         "--val-dataset",
         dest="val_dataset_str",
+        default="ImageNet:split=VAL:root=./datasets/imagenet:extra=./datasets/imagenet",
         type=str,
         help="Validation dataset",
     )

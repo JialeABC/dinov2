@@ -16,16 +16,21 @@ class ClusterType(Enum):
 
 
 def _guess_cluster_type() -> ClusterType:
-    uname = os.uname()
-    if uname.sysname == "Linux":
-        if uname.release.endswith("-aws"):
-            # Linux kernel versions on AWS instances are of the form "5.4.0-1051-aws"
-            return ClusterType.AWS
-        elif uname.nodename.startswith("rsc"):
-            # Linux kernel versions on RSC instances are standard ones but hostnames start with "rsc"
-            return ClusterType.RSC
+    # uname = os.uname()
+    try:
+        uname = os.uname()
+    except AttributeError:
+        # Windows 不支持 os.uname()，直接判定为本地环境
+        return ClusterType.FAIR
+    # if uname.sysname == "Linux":
+    #     if uname.release.endswith("-aws"):
+    #         # Linux kernel versions on AWS instances are of the form "5.4.0-1051-aws"
+    #         return ClusterType.AWS
+    #     elif uname.nodename.startswith("rsc"):
+    #         # Linux kernel versions on RSC instances are standard ones but hostnames start with "rsc"
+    #         return ClusterType.RSC
 
-    return ClusterType.FAIR
+    # return ClusterType.FAIR
 
 
 def get_cluster_type(cluster_type: Optional[ClusterType] = None) -> Optional[ClusterType]:

@@ -8,9 +8,12 @@ import logging
 import math
 import os
 from functools import partial
+from xml.parsers.expat import model
 
 from fvcore.common.checkpoint import PeriodicCheckpointer
 import torch
+from torchvision.datasets import ImageFolder
+from torch.utils.data import DataLoader
 
 from dinov2.data import SamplerType, make_data_loader, make_dataset
 from dinov2.data import collate_data_and_cast, DataAugmentationDINO, CellAugmentationDINO, MaskingGenerator
@@ -23,16 +26,17 @@ from dinov2.utils.utils import CosineScheduler
 from dinov2.train.ssl_meta_arch import SSLMetaArch
 
 
+
 torch.backends.cuda.matmul.allow_tf32 = True  # PyTorch 1.12 sets this to False by default
 logger = logging.getLogger("dinov2")
 
 
 def get_args_parser(add_help: bool = True):
     parser = argparse.ArgumentParser("DINOv2 training", add_help=add_help)
-    parser.add_argument("--config-file", default="", metavar="FILE", help="path to config file")
+    parser.add_argument("--config-file", default="D:/Deeplearning_code/yolov8/dinov2/dinov2/configs/train/vitl16_short.yaml", metavar="FILE", help="path to config file")
     parser.add_argument(
         "--no-resume",
-        action="store_true",
+        default=False,
         help="Whether to not attempt to resume from the checkpoint directory. ",
     )
     parser.add_argument("--eval-only", action="store_true", help="perform evaluation only")
@@ -50,7 +54,7 @@ For python-based LazyConfig, use "path.key=value".
     parser.add_argument(
         "--output-dir",
         "--output_dir",
-        default="",
+        default="D:/Deeplearning_code/yolov8/dinov2/output",
         type=str,
         help="Output directory to save logs and checkpoints",
     )
@@ -200,11 +204,15 @@ def do_train(cfg, model, resume=False):
 
     # setup data loader
 
-    dataset = make_dataset(
-        dataset_str=cfg.train.dataset_path,
-        transform=data_transform,
-        target_transform=lambda _: (),
-    )
+    # dataset = make_dataset(
+    #     dataset_str=cfg.train.dataset_path,
+    #     transform=data_transform,
+    #     target_transform=lambda _: (),
+    # )
+
+    dataset = ImageFolder("D:/Deeplearning_code/yolov8/dinov2/datasets/imagenet/train", transform=data_transform)
+
+
     # sampler_type = SamplerType.INFINITE
     sampler_type = SamplerType.SHARDED_INFINITE
     data_loader = make_data_loader(
@@ -218,6 +226,7 @@ def do_train(cfg, model, resume=False):
         drop_last=True,
         collate_fn=collate_fn,
     )
+    # data_loader = DataLoader(dataset, batch_size=64, shuffle=False, num_workers=4)
 
     # training loop
 
