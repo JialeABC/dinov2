@@ -1,8 +1,8 @@
 import torch
 
 # 输入输出路径（按你的实际路径修改）
-input_path = "D:/Deeplearning_code/yolov8/dinov2/output/My_study_dinov2_pth/model_final.rank_0.pth"
-output_path = "D:/Deeplearning_code/yolov8/dinov2/output/My_study_dinov2_pth/pretrain_teacher_backbone.pth"
+input_path = "D:/Deeplearning_code/yolov8/dinov2/output/model_0033749.rank_0.pth"
+output_path = "D:/Deeplearning_code/yolov8/dinov2/output/pretrain_teacher_backbone.pth"
 
 # 加载原始 checkpoint
 print(f"正在加载: {input_path}")
